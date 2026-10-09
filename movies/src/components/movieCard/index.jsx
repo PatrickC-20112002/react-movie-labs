@@ -13,15 +13,38 @@ import IconButton from "@mui/material/IconButton";
 import Grid from "@mui/material/Grid";
 import img from '../../images/film-poster-placeholder.png'
 import { Link } from "react-router";
+import Avatar from "@mui/material/Avatar";
 
 export default function MovieCard(props) {
   const movie = props.movie;
 
+  const handleAddToFavorite = (e) => {
+  e.preventDefault();
+  props.selectFavorite(movie.id);
+  };
+
   return (
     <Card>
       <CardHeader
-        title={movie.title}
-        sx={{ textWrap: "nowrap" }}
+        avatar={
+          movie.favorite ? (
+            <Avatar
+              sx={{
+                backgroundColor: "red"
+              }}
+            >
+              <FavoriteIcon />
+            </Avatar>
+          ) : null
+        }
+        title={
+          <Typography
+            variant="h5"
+            component="p"
+          >
+            {movie.title}{" "}
+          </Typography>
+        }
       />
 
       <CardMedia
@@ -54,7 +77,7 @@ export default function MovieCard(props) {
       <CardActions disableSpacing>
         <IconButton
           aria-label="add to favorites"
-          onClick={null}
+          onClick={handleAddToFavorite}
         >
           <FavoriteIcon
             color="primary"

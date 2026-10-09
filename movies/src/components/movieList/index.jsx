@@ -15,7 +15,11 @@ const MovieList = (props) => {
       }}
       sx={{ padding: "20px" }}
     >
-      <Movie key={m.id} movie={m} />
+      <Movie
+        key={m.id}
+        movie={m}
+        selectFavorite={props.selectFavorite}
+      />
     </Grid>
   ));
 
