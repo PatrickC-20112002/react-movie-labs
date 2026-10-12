@@ -5,31 +5,27 @@ import {
   Route,
   Navigate,
   Routes,
-  Link
 } from "react-router";
 
 import HomePage from "./pages/homePage";
 import MoviePage from "./pages/movieDetailsPage";
 import FavoriteMoviesPage from "./pages/favoriteMoviesPage";
 import MovieReviewPage from "./pages/movieReviewPage";
+import SiteHeader from "./components/siteHeader";
 
 const App = () => {
   return (
     <BrowserRouter>
 
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-
-        <li>
-          <Link to="/movies/favorites">
-            Favorites
-          </Link>
-        </li>
-      </ul>
+      <SiteHeader />
 
       <Routes>
+
+        <Route
+          path="/reviews/:id"
+          element={<MovieReviewPage />}
+        />
+
         <Route
           path="/movies/favorites"
           element={<FavoriteMoviesPage />}
@@ -50,11 +46,8 @@ const App = () => {
           element={<Navigate to="/" />}
         />
 
-        <Route
-          path="/reviews/:id"
-          element={<MovieReviewPage />}
-        />
       </Routes>
+
     </BrowserRouter>
   );
 };
