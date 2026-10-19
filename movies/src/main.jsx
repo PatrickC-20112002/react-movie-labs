@@ -14,6 +14,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import HomePage from "./pages/homePage";
 import MoviePage from "./pages/movieDetailsPage";
 import MovieReviewPage from "./pages/movieReviewPage";
+import AddMovieReviewPage from "./pages/addMovieReviewPage";
 import FavoriteMoviesPage from "./pages/favoriteMoviesPage";
 import UpcomingMoviesPage from "./pages/upcomingMoviesPage";
 
@@ -46,6 +47,11 @@ const App = () => {
             <Route
               path="/movies/upcoming"
               element={<UpcomingMoviesPage />}
+            />
+
+            <Route
+              path="/reviews/form"
+              element={<AddMovieReviewPage />}
             />
 
             <Route
