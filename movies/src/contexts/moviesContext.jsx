@@ -22,11 +22,11 @@ const MoviesContextProvider = ({ children }) => {
   };
 
   const addReview = (movie, review) => {
-    setMyReviews((previous) => ({
-      ...previous,
-      [movie.id]: review,
-    }));
-  };
+  setMyReviews((previous) => ({
+    ...previous,
+    [movie.id]: review,
+  }));
+};
 
   const addToMustWatch = (movie) => {
     setMustWatch((previous) =>

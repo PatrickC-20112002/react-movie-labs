@@ -4,6 +4,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { useForm, Controller } from "react-hook-form";
+import { useState, useContext } from "react";
+import { MoviesContext } from "../../contexts/moviesContext";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import { useNavigate } from "react-router";
 
 const ratings = [
   { value: 5, label: "Excellent" },
@@ -14,6 +19,9 @@ const ratings = [
 ];
 
 const ReviewForm = ({ movie }) => {
+  const { addReview } = useContext(MoviesContext);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -28,17 +36,40 @@ const ReviewForm = ({ movie }) => {
   });
 
   const onSubmit = (review) => {
-    console.log({
-      ...review,
-      movieId: movie.id,
+    addReview(movie, {
+        ...review,
+        movieId: movie.id,
     });
+
+    setOpen(true);
   };
 
+    const handleSnackClose = () => {
+        setOpen(false);
+        navigate("/movies/favorites");
+    };
+
   return (
-    <Box sx={{ marginTop: 2 }}>
-      <Typography variant="h3" component="h2">
-        Write a review
-      </Typography>
+  <Box sx={{ marginTop: 2 }}>
+    <Snackbar
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      open={open}
+      onClose={handleSnackClose}
+    >
+      <MuiAlert
+        severity="success"
+        variant="filled"
+        onClose={handleSnackClose}
+      >
+        <Typography variant="h6">
+          Thank you for submitting a review
+        </Typography>
+      </MuiAlert>
+    </Snackbar>
+
+    <Typography variant="h3" component="h2">
+      Write a review
+    </Typography>
 
       <Box
         component="form"
