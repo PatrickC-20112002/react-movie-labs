@@ -4,43 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 import Spinner from "../components/spinner";
 
 const HomePage = () => {
-  const {
-    data,
-    error,
-    isPending,
-    isError,
-  } = useQuery({
+  const { data, error, isPending, isError } = useQuery({
     queryKey: ["discover"],
     queryFn: getMovies,
   });
 
-  if (isPending) {
-    return <Spinner />;
-  }
-
-  if (isError) {
-    return <h1>{error.message}</h1>;
-  }
-
-  const movies = data.results;
-
-  // Temporary compatibility with the old favourites page.
-  // This feature will be replaced by React Context in Step 4.
-  const favorites = movies.filter((m) => m.favorite);
-
-  localStorage.setItem(
-    "favorites",
-    JSON.stringify(favorites)
-  );
-
-  // Temporary placeholder.
-  const addToFavorites = (movieId) => true;
+  if (isPending) return <Spinner />;
+  if (isError) return <h1>{error.message}</h1>;
 
   return (
     <PageTemplate
       title="Discover Movies"
-      movies={movies}
-      selectFavorite={addToFavorites}
+      movies={data.results}
     />
   );
 };

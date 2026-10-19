@@ -14,20 +14,26 @@ import Grid from "@mui/material/Grid";
 import img from '../../images/film-poster-placeholder.png'
 import { Link } from "react-router";
 import Avatar from "@mui/material/Avatar";
+import { useContext } from "react";
+import { MoviesContext } from "../../contexts/moviesContext";
 
 export default function MovieCard(props) {
   const movie = props.movie;
 
+  const { favorites, addToFavorites } = useContext(MoviesContext);
+
+  const isFavorite = favorites.includes(movie.id);
+
   const handleAddToFavorite = (e) => {
-  e.preventDefault();
-  props.selectFavorite(movie.id);
+    e.preventDefault();
+    addToFavorites(movie);
   };
 
   return (
     <Card>
       <CardHeader
         avatar={
-          movie.favorite ? (
+          isfavorite ? (
             <Avatar
               sx={{
                 backgroundColor: "red"
