@@ -18,7 +18,7 @@ const MovieList = (props) => {
       <Movie
         key={m.id}
         movie={m}
-        selectFavorite={props.selectFavorite}
+        action={props.action}
       />
     </Grid>
   ));

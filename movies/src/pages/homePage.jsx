@@ -2,6 +2,7 @@ import { getMovies } from "../api/tmdb-api";
 import PageTemplate from "../components/templateMovieListPage";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "../components/spinner";
+import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
 
 const HomePage = () => {
   const { data, error, isPending, isError } = useQuery({
@@ -13,10 +14,11 @@ const HomePage = () => {
   if (isError) return <h1>{error.message}</h1>;
 
   return (
-    <PageTemplate
-      title="Discover Movies"
-      movies={data.results}
-    />
+  <PageTemplate
+    title="Discover Movies"
+    movies={data.results}
+    action={(movie) => <AddToFavoritesIcon movie={movie} />}
+  />
   );
 };
 
