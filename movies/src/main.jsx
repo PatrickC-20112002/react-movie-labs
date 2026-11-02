@@ -17,6 +17,7 @@ import MovieReviewPage from "./pages/movieReviewPage";
 import AddMovieReviewPage from "./pages/addMovieReviewPage";
 import FavoriteMoviesPage from "./pages/favoriteMoviesPage";
 import UpcomingMoviesPage from "./pages/upcomingMoviesPage";
+import PopularMoviesPage from "./pages/popularMoviesPage";
 
 import SiteHeader from "./components/siteHeader";
 
@@ -47,6 +48,11 @@ const App = () => {
             <Route
               path="/movies/upcoming"
               element={<UpcomingMoviesPage />}
+            />
+
+            <Route
+              path="/movies/popular"
+              element={<PopularMoviesPage />}
             />
 
             <Route

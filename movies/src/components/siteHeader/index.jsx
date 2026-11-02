@@ -45,8 +45,8 @@ const SiteHeader = () => {
       path: "/movies/upcoming"
     },
     {
-      label: "Option 4",
-      path: "/"
+      label: "Popular",
+      path: "/movies/popular"
     },
   ];
 
