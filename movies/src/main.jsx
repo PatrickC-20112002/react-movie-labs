@@ -20,6 +20,7 @@ import UpcomingMoviesPage from "./pages/upcomingMoviesPage";
 import PopularMoviesPage from "./pages/popularMoviesPage";
 import TopRatedMoviesPage from "./pages/topRatedMoviesPage";
 import NowPlayingMoviesPage from "./pages/nowPlayingMoviesPage";
+import PersonDetailsPage from "./pages/personDetailsPage";
 
 import SiteHeader from "./components/siteHeader";
 
@@ -78,8 +79,18 @@ const App = () => {
             />
 
             <Route
+              path="/people/:id"
+              element={<PersonDetailsPage />}
+            />
+
+            <Route
               path="/movies/:id"
               element={<MoviePage />}
+            />
+
+            <Route
+              path="/people/:id"
+              element={<PersonDetailsPage />}
             />
 
             <Route

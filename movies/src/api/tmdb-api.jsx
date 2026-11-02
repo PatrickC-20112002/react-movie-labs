@@ -155,3 +155,45 @@ export const getNowPlayingMovies = async () => {
 
   return response.json();
 };
+
+export const getMovieCredits = async ({ queryKey }) => {
+  const [, { id }] = queryKey;
+
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie credits");
+  }
+
+  return response.json();
+};
+
+export const getPersonDetails = async ({ queryKey }) => {
+  const [, { id }] = queryKey;
+
+  const response = await fetch(
+    `https://api.themoviedb.org/3/person/${encodeURIComponent(id)}?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch actor details");
+  }
+
+  return response.json();
+};
+
+export const getPersonMovieCredits = async ({ queryKey }) => {
+  const [, { id }] = queryKey;
+
+  const response = await fetch(
+    `https://api.themoviedb.org/3/person/${encodeURIComponent(id)}/movie_credits?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch actor filmography");
+  }
+
+  return response.json();
+};
