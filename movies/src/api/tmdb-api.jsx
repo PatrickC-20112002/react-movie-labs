@@ -143,3 +143,15 @@ export const getTopRatedMovies = async () => {
 
   return response.json();
 };
+
+export const getNowPlayingMovies = async () => {
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/now_playing?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=1`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch now playing movies");
+  }
+
+  return response.json();
+};
