@@ -89,11 +89,6 @@ const App = () => {
             />
 
             <Route
-              path="/people/:id"
-              element={<PersonDetailsPage />}
-            />
-
-            <Route
               path="/"
               element={<HomePage />}
             />

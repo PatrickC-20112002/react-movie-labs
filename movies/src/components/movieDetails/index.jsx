@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Drawer from "@mui/material/Drawer";
 import MovieReviews from "../movieReviews";
 import MovieCast from "../movieCast";
+import MovieCrew from "../movieCrew";
 
 const root = {
   display: "flex",
@@ -105,6 +106,8 @@ const MovieDetails = ({ movie }) => {
       </Paper>
 
       <MovieCast movieId={movie.id} />
+
+      <MovieCrew movieId={movie.id} />
 
       <Fab
         color="secondary"

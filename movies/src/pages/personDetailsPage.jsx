@@ -56,15 +56,41 @@ const PersonDetailsPage = () => {
   const person = personQuery.data;
   const credits = creditsQuery.data;
 
-  // Remove duplicate movie entries from the filmography.
-  const uniqueMovies = Array.from(
-    new Map(
-      (credits.cast ?? []).map((movie) => [
-        movie.id,
-        movie,
-      ])
-    ).values()
-  );
+  // Combine acting and crew credits into one filmography.
+  const allCredits = [
+    ...(credits.cast ?? []).map((movie) => ({
+      ...movie,
+      creditRole: movie.character
+        ? `As ${movie.character}`
+        : "Acting",
+    })),
+    ...(credits.crew ?? []).map((movie) => ({
+      ...movie,
+      creditRole:
+        movie.job || movie.department || "Crew",
+    })),
+  ];
+
+  // Keep each movie once, but preserve multiple roles.
+  const movieMap = new Map();
+
+  allCredits.forEach((movie) => {
+    const existing = movieMap.get(movie.id);
+
+    if (existing) {
+      if (!existing.roles.includes(movie.creditRole)) {
+        existing.roles.push(movie.creditRole);
+      }
+    } else {
+      movieMap.set(movie.id, {
+        ...movie,
+        roles: [movie.creditRole],
+      });
+    }
+  });
+
+  const uniqueMovies = Array.from(movieMap.values());
+
 
   const filteredMovies = uniqueMovies
     .filter((movie) =>
@@ -308,14 +334,12 @@ const PersonDetailsPage = () => {
                           "Year unknown"}
                       </Typography>
 
-                      {movie.character && (
-                        <Typography
-                          variant="body2"
-                          sx={{ mt: 1 }}
-                        >
-                          As {movie.character}
-                        </Typography>
-                      )}
+                      <Typography
+                        variant="body2"
+                        sx={{ mt: 1 }}
+                      >
+                        {movie.roles.join(" · ")}
+                      </Typography>
 
                       <Typography
                         variant="body2"
