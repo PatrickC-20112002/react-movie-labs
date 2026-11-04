@@ -212,3 +212,52 @@ export const getMovieRecommendations = async ({ queryKey }) => {
 
   return response.json();
 };
+
+export const getAdvancedMovies = async ({ queryKey }) => {
+  const [, filters] = queryKey;
+
+  const {
+    page,
+    genre,
+    year,
+    minRating,
+    sortBy,
+  } = filters;
+
+  const params = new URLSearchParams({
+    api_key: import.meta.env.VITE_TMDB_KEY,
+    language: "en-US",
+    include_adult: "false",
+    include_video: "false",
+    page: String(page),
+    sort_by: sortBy,
+  });
+
+  if (genre) {
+    params.set("with_genres", genre);
+  }
+
+  if (year) {
+    params.set("primary_release_year", year);
+  }
+
+  if (Number(minRating) > 0) {
+    params.set("vote_average.gte", minRating);
+  }
+
+  // Avoid ranking films with only a handful of votes
+  // above widely reviewed movies.
+  if (sortBy === "vote_average.desc") {
+    params.set("vote_count.gte", "100");
+  }
+
+  const response = await fetch(
+    `https://api.themoviedb.org/3/discover/movie?${params.toString()}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to discover movies");
+  }
+
+  return response.json();
+};

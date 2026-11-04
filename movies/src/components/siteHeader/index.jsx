@@ -26,7 +26,7 @@ const SiteHeader = () => {
 
   const isMobile =
     useMediaQuery(
-      theme.breakpoints.down("md")
+      theme.breakpoints.down("xl")
     );
 
   const navigate = useNavigate();
@@ -55,6 +55,10 @@ const SiteHeader = () => {
     {
       label: "Now Playing",
       path: "/movies/now-playing"
+    },
+    {
+      label: "Explore",
+      path: "/movies/explore"
     },
   ];
 

@@ -20,6 +20,7 @@ import UpcomingMoviesPage from "./pages/upcomingMoviesPage";
 import PopularMoviesPage from "./pages/popularMoviesPage";
 import TopRatedMoviesPage from "./pages/topRatedMoviesPage";
 import NowPlayingMoviesPage from "./pages/nowPlayingMoviesPage";
+import ExploreMoviesPage from "./pages/exploreMoviesPage";
 import PersonDetailsPage from "./pages/personDetailsPage";
 
 import SiteHeader from "./components/siteHeader";
@@ -66,6 +67,11 @@ const App = () => {
             <Route
               path="/movies/now-playing"
               element={<NowPlayingMoviesPage />}
+            />
+
+            <Route
+              path="/movies/explore"
+              element={<ExploreMoviesPage />}
             />
 
             <Route
