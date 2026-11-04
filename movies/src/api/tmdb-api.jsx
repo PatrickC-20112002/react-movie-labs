@@ -197,3 +197,18 @@ export const getPersonMovieCredits = async ({ queryKey }) => {
 
   return response.json();
 };
+
+
+export const getMovieRecommendations = async ({ queryKey }) => {
+  const [, { id }] = queryKey;
+
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/${encodeURIComponent(id)}/recommendations?api_key=${import.meta.env.VITE_TMDB_KEY}&language=en-US&page=1`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie recommendations");
+  }
+
+  return response.json();
+};

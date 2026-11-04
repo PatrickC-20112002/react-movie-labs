@@ -11,6 +11,7 @@ import Drawer from "@mui/material/Drawer";
 import MovieReviews from "../movieReviews";
 import MovieCast from "../movieCast";
 import MovieCrew from "../movieCrew";
+import MovieRecommendations from "../movieRecommendations";
 
 const root = {
   display: "flex",
@@ -108,6 +109,8 @@ const MovieDetails = ({ movie }) => {
       <MovieCast movieId={movie.id} />
 
       <MovieCrew movieId={movie.id} />
+
+      <MovieRecommendations movieId={movie.id} />
 
       <Fab
         color="secondary"
