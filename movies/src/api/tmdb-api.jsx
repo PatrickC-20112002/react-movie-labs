@@ -261,3 +261,25 @@ export const getAdvancedMovies = async ({ queryKey }) => {
 
   return response.json();
 };
+
+export const searchMovies = async ({ queryKey }) => {
+  const [, { query, page }] = queryKey;
+
+  const params = new URLSearchParams({
+    api_key: import.meta.env.VITE_TMDB_KEY,
+    language: "en-US",
+    include_adult: "false",
+    query,
+    page: String(page),
+  });
+
+  const response = await fetch(
+    `https://api.themoviedb.org/3/search/movie?${params.toString()}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to search movies");
+  }
+
+  return response.json();
+};

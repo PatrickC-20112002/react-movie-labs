@@ -21,6 +21,7 @@ import PopularMoviesPage from "./pages/popularMoviesPage";
 import TopRatedMoviesPage from "./pages/topRatedMoviesPage";
 import NowPlayingMoviesPage from "./pages/nowPlayingMoviesPage";
 import ExploreMoviesPage from "./pages/exploreMoviesPage";
+import SearchMoviesPage from "./pages/searchMoviesPage";
 import MustWatchMoviesPage from "./pages/mustWatchMoviesPage";
 import PersonDetailsPage from "./pages/personDetailsPage";
 
@@ -73,6 +74,11 @@ const App = () => {
             <Route
               path="/movies/explore"
               element={<ExploreMoviesPage />}
+            />
+
+            <Route
+              path="/movies/search"
+              element={<SearchMoviesPage />}
             />
 
             <Route

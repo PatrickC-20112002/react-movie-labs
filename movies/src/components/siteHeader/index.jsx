@@ -64,6 +64,10 @@ const SiteHeader = () => {
       label: "Explore",
       path: "/movies/explore"
     },
+    {
+      label: "Search",
+      path: "/movies/search"
+    },
   ];
 
   const handleMenuSelect = (pageURL) => {
