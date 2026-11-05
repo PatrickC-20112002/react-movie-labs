@@ -9,6 +9,7 @@ import {
 
 import MovieList from "../components/movieList";
 import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
+import AddToMustWatchIcon from "../components/cardIcons/addToMustWatch";
 import Spinner from "../components/spinner";
 
 import Container from "@mui/material/Container";
@@ -271,7 +272,10 @@ const ExploreMoviesPage = () => {
               <MovieList
                 movies={data.results}
                 action={(movie) => (
-                  <AddToFavoritesIcon movie={movie} />
+                  <>
+                    <AddToFavoritesIcon movie={movie} />
+                    <AddToMustWatchIcon movie={movie} />
+                  </>
                 )}
               />
             </Grid>
