@@ -1,171 +1,283 @@
-import React, { useState } from "react";
+
+import { useState } from "react";
+import { Link, useLocation } from "react-router";
+
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
-import MenuIcon from "@mui/icons-material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { useNavigate } from "react-router";
-import { styled } from "@mui/material/styles";
-import { useTheme } from "@mui/material/styles";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import ListSubheader from "@mui/material/ListSubheader";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 
-const Offset = styled("div")(
-  ({ theme }) => theme.mixins.toolbar
-);
+import MenuIcon from "@mui/icons-material/Menu";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+
+const browsePages = [
+  { label: "Popular", path: "/movies/popular" },
+  { label: "Top Rated", path: "/movies/top-rated" },
+  { label: "Now Playing", path: "/movies/now-playing" },
+  { label: "Upcoming", path: "/movies/upcoming" },
+];
+
+const listPages = [
+  { label: "Favourites", path: "/movies/favorites" },
+  { label: "Must Watch", path: "/movies/must-watch" },
+];
 
 const SiteHeader = () => {
-  const [anchorEl, setAnchorEl] =
-    useState(null);
-
-  const open = Boolean(anchorEl);
+  const [browseAnchor, setBrowseAnchor] = useState(null);
+  const [listsAnchor, setListsAnchor] = useState(null);
+  const [mobileAnchor, setMobileAnchor] = useState(null);
 
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const location = useLocation();
 
-  const isMobile =
-    useMediaQuery(
-      theme.breakpoints.down("xl")
-    );
+  const currentPath = location.pathname;
 
-  const navigate = useNavigate();
+  const browseActive = browsePages.some(
+    (page) => page.path === currentPath
+  );
 
-  const menuOptions = [
-    {
-      label: "Home",
-      path: "/"
-    },
-    {
-      label: "Favorites",
-      path: "/movies/favorites"
-    },
-    {
-      label: "Must Watch",
-      path: "/movies/must-watch"
-    },
-    {
-      label: "Upcoming",
-      path: "/movies/upcoming"
-    },
-    {
-      label: "Popular",
-      path: "/movies/popular"
-    },
-    {
-      label: "Top Rated",
-      path: "/movies/top-rated"
-    },
-    {
-      label: "Now Playing",
-      path: "/movies/now-playing"
-    },
-    {
-      label: "Explore",
-      path: "/movies/explore"
-    },
-    {
-      label: "Search",
-      path: "/movies/search"
-    },
-  ];
+  const listsActive = listPages.some(
+    (page) => page.path === currentPath
+  );
 
-  const handleMenuSelect = (pageURL) => {
-    setAnchorEl(null);
-    navigate(pageURL);
-  };
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const closeMenus = () => {
+    setBrowseAnchor(null);
+    setListsAnchor(null);
+    setMobileAnchor(null);
   };
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        color="secondary"
-      >
-        <Toolbar>
-
+      <AppBar position="fixed" color="secondary">
+        <Toolbar sx={{ gap: 2 }}>
           <Typography
-            variant="h4"
-            sx={{ flexGrow: 1 }}
+            component={Link}
+            to="/"
+            variant="h6"
+            onClick={closeMenus}
+            sx={{
+              flexGrow: 1,
+              color: "inherit",
+              textDecoration: "none",
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+            }}
           >
             TMDB Client
-          </Typography>
-
-          <Typography
-            variant="h6"
-            sx={{ flexGrow: 1 }}
-          >
-            All you ever wanted to know about Movies!
           </Typography>
 
           {isMobile ? (
             <>
               <IconButton
-                aria-label="menu"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
+                aria-label="open navigation menu"
                 color="inherit"
+                onClick={(event) =>
+                  setMobileAnchor(event.currentTarget)
+                }
               >
                 <MenuIcon />
               </IconButton>
 
               <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
+                anchorEl={mobileAnchor}
+                open={Boolean(mobileAnchor)}
+                onClose={closeMenus}
+                slotProps={{
+                  paper: {
+                    sx: {
+                      minWidth: 220,
+                      maxHeight: "75vh",
+                    },
+                  },
                 }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={open}
-                onClose={() =>
-                  setAnchorEl(null)
-                }
               >
-                {menuOptions.map((opt) => (
+                <MenuItem
+                  component={Link}
+                  to="/"
+                  selected={currentPath === "/"}
+                  onClick={closeMenus}
+                >
+                  Home
+                </MenuItem>
+
+                <MenuItem
+                  component={Link}
+                  to="/movies/explore"
+                  selected={currentPath === "/movies/explore"}
+                  onClick={closeMenus}
+                >
+                  Explore
+                </MenuItem>
+
+                <MenuItem
+                  component={Link}
+                  to="/movies/search"
+                  selected={currentPath === "/movies/search"}
+                  onClick={closeMenus}
+                >
+                  Search
+                </MenuItem>
+
+                <Divider />
+
+                <ListSubheader>Browse</ListSubheader>
+
+                {browsePages.map((page) => (
                   <MenuItem
-                    key={opt.label}
-                    onClick={() =>
-                      handleMenuSelect(
-                        opt.path
-                      )
-                    }
+                    key={page.path}
+                    component={Link}
+                    to={page.path}
+                    selected={currentPath === page.path}
+                    onClick={closeMenus}
                   >
-                    {opt.label}
+                    {page.label}
+                  </MenuItem>
+                ))}
+
+                <Divider />
+
+                <ListSubheader>My Lists</ListSubheader>
+
+                {listPages.map((page) => (
+                  <MenuItem
+                    key={page.path}
+                    component={Link}
+                    to={page.path}
+                    selected={currentPath === page.path}
+                    onClick={closeMenus}
+                  >
+                    {page.label}
                   </MenuItem>
                 ))}
               </Menu>
             </>
           ) : (
             <>
-              {menuOptions.map((opt) => (
-                <Button
-                  key={opt.label}
-                  color="inherit"
-                  onClick={() =>
-                    handleMenuSelect(
-                      opt.path
-                    )
-                  }
-                >
-                  {opt.label}
-                </Button>
-              ))}
+              <Button
+                component={Link}
+                to="/"
+                color="inherit"
+                sx={{
+                  borderBottom: currentPath === "/"
+                    ? "2px solid"
+                    : "2px solid transparent",
+                  borderRadius: 0,
+                }}
+              >
+                Home
+              </Button>
+
+              <Button
+                component={Link}
+                to="/movies/explore"
+                color="inherit"
+                sx={{
+                  borderBottom: currentPath === "/movies/explore"
+                    ? "2px solid"
+                    : "2px solid transparent",
+                  borderRadius: 0,
+                }}
+              >
+                Explore
+              </Button>
+
+              <Button
+                component={Link}
+                to="/movies/search"
+                color="inherit"
+                sx={{
+                  borderBottom: currentPath === "/movies/search"
+                    ? "2px solid"
+                    : "2px solid transparent",
+                  borderRadius: 0,
+                }}
+              >
+                Search
+              </Button>
+
+              <Button
+                color="inherit"
+                endIcon={<ArrowDropDownIcon />}
+                onClick={(event) => {
+                  setListsAnchor(null);
+                  setBrowseAnchor(event.currentTarget);
+                }}
+                sx={{
+                  borderBottom: browseActive
+                    ? "2px solid"
+                    : "2px solid transparent",
+                  borderRadius: 0,
+                }}
+              >
+                Browse
+              </Button>
+
+              <Menu
+                anchorEl={browseAnchor}
+                open={Boolean(browseAnchor)}
+                onClose={closeMenus}
+              >
+                {browsePages.map((page) => (
+                  <MenuItem
+                    key={page.path}
+                    component={Link}
+                    to={page.path}
+                    selected={currentPath === page.path}
+                    onClick={closeMenus}
+                  >
+                    {page.label}
+                  </MenuItem>
+                ))}
+              </Menu>
+
+              <Button
+                color="inherit"
+                endIcon={<ArrowDropDownIcon />}
+                onClick={(event) => {
+                  setBrowseAnchor(null);
+                  setListsAnchor(event.currentTarget);
+                }}
+                sx={{
+                  borderBottom: listsActive
+                    ? "2px solid"
+                    : "2px solid transparent",
+                  borderRadius: 0,
+                }}
+              >
+                My Lists
+              </Button>
+
+              <Menu
+                anchorEl={listsAnchor}
+                open={Boolean(listsAnchor)}
+                onClose={closeMenus}
+              >
+                {listPages.map((page) => (
+                  <MenuItem
+                    key={page.path}
+                    component={Link}
+                    to={page.path}
+                    selected={currentPath === page.path}
+                    onClick={closeMenus}
+                  >
+                    {page.label}
+                  </MenuItem>
+                ))}
+              </Menu>
             </>
           )}
-
         </Toolbar>
       </AppBar>
 
-      <Offset />
+      <Toolbar />
     </>
   );
 };
