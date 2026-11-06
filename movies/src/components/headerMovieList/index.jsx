@@ -1,49 +1,35 @@
-import React from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
+
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useNavigate } from "react-router";
 
-const Header = (props) => {
-  const title = props.title;
-  const navigate = useNavigate();
-
+const Header = ({ title, description }) => {
   return (
-    <Paper 
-      component="div"
+    <Box
       sx={{
-        display: "flex",
-        justifyContent: "space-around",
-        flexWrap: "wrap",
-        marginBottom: 1.5,
+        mb: 3,
+        pb: 2,
+        borderBottom: 1,
+        borderColor: "divider",
       }}
     >
-      <IconButton
-        aria-label="go back"
-        onClick={() => navigate(-1)}
+      <Typography
+        variant="h4"
+        component="h1"
+        sx={{ fontWeight: 500 }}
       >
-        <ArrowBackIcon
-          color="primary"
-          fontSize="large"
-        />
-      </IconButton>
-
-      <Typography variant="h4" component="h3">
         {title}
       </Typography>
 
-      <IconButton
-        aria-label="go forward"
-        onClick={() => navigate(+1)}
-      >
-        <ArrowForwardIcon
-          color="primary"
-          fontSize="large"
-        />
-      </IconButton>
-    </Paper>
+      {description && (
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          sx={{ mt: 1 }}
+        >
+          {description}
+        </Typography>
+      )}
+    </Box>
   );
 };
 

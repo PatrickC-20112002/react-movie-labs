@@ -11,6 +11,7 @@ import MovieList from "../components/movieList";
 import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
 import AddToMustWatchIcon from "../components/cardIcons/addToMustWatch";
 import Spinner from "../components/spinner";
+import Header from "../components/headerMovieList";
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
@@ -89,17 +90,10 @@ const ExploreMoviesPage = () => {
         py: 4,
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Explore Movies
-      </Typography>
-
-      <Typography
-        color="text.secondary"
-        sx={{ mb: 3 }}
-      >
-        Discover movies using filters,
-        sorting and pagination.
-      </Typography>
+      <Header
+        title="Explore Movies"
+        description="Discover movies using filters, sorting and pagination."
+      />
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2}>

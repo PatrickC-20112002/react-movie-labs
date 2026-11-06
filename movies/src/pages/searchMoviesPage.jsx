@@ -8,6 +8,7 @@ import MovieList from "../components/movieList";
 import AddToFavoritesIcon from "../components/cardIcons/addToFavorites";
 import AddToMustWatchIcon from "../components/cardIcons/addToMustWatch";
 import Spinner from "../components/spinner";
+import Header from "../components/headerMovieList";
 
 import Container from "@mui/material/Container";
 import Paper from "@mui/material/Paper";
@@ -82,16 +83,10 @@ const SearchMoviesPage = () => {
         py: 4,
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Search Movies
-      </Typography>
-
-      <Typography
-        color="text.secondary"
-        sx={{ mb: 3 }}
-      >
-        Search the TMDB movie catalogue by title.
-      </Typography>
+      <Header
+        title="Search Movies"
+        description="Search the TMDB movie catalogue by title."
+      />
 
       <Paper sx={{ p: 3, mb: 4 }}>
         <Box

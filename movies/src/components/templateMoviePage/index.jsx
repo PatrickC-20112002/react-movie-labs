@@ -1,18 +1,20 @@
-import React from "react";
 
-import MovieHeader from "../headerMovie";
-import Grid from "@mui/material/Grid";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import { getMovieImages } from "../../api/tmdb-api";
-import { useQuery } from "@tanstack/react-query";
-import Spinner from "../spinner";
+
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
 
 const TemplateMoviePage = ({ movie, children }) => {
+  const [showAllPosters, setShowAllPosters] = useState(false);
+
   const {
     data,
-    error,
     isPending,
     isError,
   } = useQuery({
@@ -20,51 +22,110 @@ const TemplateMoviePage = ({ movie, children }) => {
     queryFn: getMovieImages,
   });
 
-  if (isPending) {
-    return <Spinner />;
-  }
+  const posters = (data?.posters ?? []).filter(
+    (poster) =>
+      poster.file_path &&
+      poster.file_path !== movie.poster_path
+  );
 
-  if (isError) {
-    return <h1>{error.message}</h1>;
-  }
-
-  const images = data.posters;
+  const visiblePosters = showAllPosters
+    ? posters
+    : posters.slice(0, 6);
 
   return (
-    <>
-      <MovieHeader movie={movie} />
+    <Container
+      maxWidth="xl"
+      sx={{
+        py: { xs: 2, md: 3 },
+        px: { xs: 2, sm: 3 },
+      }}
+    >
+      {children}
 
-      <Grid
-        container
-        spacing={5}
-        style={{ padding: "15px" }}
-      >
-        <Grid size={{ xs: 3 }}>
-          <ImageList
-            sx={{
-              height: "100vh",
-            }}
-            cols={1}
+      <Box sx={{ mt: 5 }}>
+        {isPending ? (
+          <Typography
+            variant="body2"
+            color="text.secondary"
           >
-            {images.map((image) => (
-              <ImageListItem
-                key={image.file_path}
-                cols={1}
-              >
-                <img
-                  src={`https://image.tmdb.org/t/p/w500/${image.file_path}`}
-                  alt={`${movie.title} poster`}
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
-        </Grid>
+            Loading additional posters...
+          </Typography>
+        ) : isError ? (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+          >
+            Additional posters could not be loaded.
+          </Typography>
+        ) : posters.length > 0 ? (
+          <>
+            <Divider sx={{ mb: 4 }} />
 
-        <Grid size={{ xs: 9 }}>
-          {children}
-        </Grid>
-      </Grid>
-    </>
+            <Typography
+              variant="h5"
+              component="h2"
+              sx={{ mb: 2 }}
+            >
+              More Posters
+            </Typography>
+
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(2, minmax(0, 1fr))",
+                  sm: "repeat(3, minmax(0, 1fr))",
+                  md: "repeat(6, minmax(0, 1fr))",
+                },
+                gap: 2,
+              }}
+            >
+              {visiblePosters.map((poster) => (
+                <Box
+                  key={poster.file_path}
+                  component="a"
+                  href={`https://image.tmdb.org/t/p/original${poster.file_path}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`View another ${movie.title} poster`}
+                >
+                  <Box
+                    component="img"
+                    src={`https://image.tmdb.org/t/p/w342${poster.file_path}`}
+                    alt={`${movie.title} alternative poster`}
+                    loading="lazy"
+                    sx={{
+                      width: "100%",
+                      aspectRatio: "2 / 3",
+                      objectFit: "cover",
+                      display: "block",
+                      borderRadius: 1,
+                      border: "1px solid",
+                      borderColor: "divider",
+                    }}
+                  />
+                </Box>
+              ))}
+            </Box>
+
+            {posters.length > 6 && (
+              <Box sx={{ mt: 3, textAlign: "center" }}>
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    setShowAllPosters((previous) => !previous)
+                  }
+                >
+                  {showAllPosters
+                    ? "Show Fewer Posters"
+                    : `Show All ${posters.length} Posters`}
+                </Button>
+              </Box>
+            )}
+          </>
+        ) : null}
+      </Box>
+    </Container>
   );
 };
 

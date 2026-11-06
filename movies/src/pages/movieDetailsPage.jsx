@@ -31,7 +31,7 @@ const MoviePage = () => {
   return (
     <>
       {movie ? (
-        <PageTemplate movie={movie}>
+        <PageTemplate key={movie.id} movie={movie}>
           <MovieDetails movie={movie} />
         </PageTemplate>
       ) : (

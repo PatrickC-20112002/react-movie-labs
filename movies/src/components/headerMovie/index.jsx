@@ -1,64 +1,55 @@
-import React from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import HomeIcon from "@mui/icons-material/Home";
-import { useNavigate } from "react-router";
 
-const MovieHeader = (props) => {
-  const movie = props.movie;
-  const navigate = useNavigate();
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+
+const MovieHeader = ({ movie }) => {
+  const hasWebsite = /^https?:\/\//i.test(
+    movie.homepage || ""
+  );
 
   return (
-    <Paper
-      component="div"
-      sx={{
-        display: "flex",
-        justifyContent: "space-around",
-        flexWrap: "wrap",
-        padding: 1.5,
-        margin: 0,
-      }}
-    >
-      <IconButton
-        aria-label="go back"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowBackIcon
-          color="primary"
-          fontSize="large"
-        />
-      </IconButton>
-
+    <Box sx={{ mb: 3 }}>
       <Typography
         variant="h4"
-        component="h3"
+        component="h1"
+        sx={{
+          fontWeight: 600,
+          mb: 1,
+        }}
       >
         {movie.title}
-
-        <a href={movie.homepage}>
-          <HomeIcon color="primary" />
-        </a>
-
-        <br />
-
-        <span>
-          {`   "${movie.tagline}"`}
-        </span>
       </Typography>
 
-      <IconButton
-        aria-label="go forward"
-        onClick={() => navigate(+1)}
-      >
-        <ArrowForwardIcon
-          color="primary"
-          fontSize="large"
-        />
-      </IconButton>
-    </Paper>
+      {movie.tagline && (
+        <Typography
+          variant="subtitle1"
+          color="text.secondary"
+          sx={{
+            fontStyle: "italic",
+            mb: 2,
+          }}
+        >
+          {movie.tagline}
+        </Typography>
+      )}
+
+      {hasWebsite && (
+        <Button
+          component="a"
+          href={movie.homepage}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="outlined"
+          size="small"
+          endIcon={<OpenInNewIcon />}
+        >
+          Official Website
+        </Button>
+      )}
+    </Box>
   );
 };
 

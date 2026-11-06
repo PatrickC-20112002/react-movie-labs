@@ -1,92 +1,160 @@
-import React from "react";
+
+import { useContext } from "react";
+import { Link } from "react-router";
+
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import CardHeader from "@mui/material/CardHeader";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import CalendarIcon from "@mui/icons-material/CalendarTodayTwoTone";
 import StarRateIcon from "@mui/icons-material/StarRate";
-import Grid from "@mui/material/Grid";
-import img from '../../images/film-poster-placeholder.png'
-import { Link } from "react-router";
-import Avatar from "@mui/material/Avatar";
-import { useContext } from "react";
+
 import { MoviesContext } from "../../contexts/moviesContext";
+import placeholder from "../../images/film-poster-placeholder.png";
 
-export default function MovieCard(props) {
-  const movie = props.movie;
-
+const MovieCard = ({ movie, action }) => {
   const { favorites } = useContext(MoviesContext);
-
   const isFavorite = favorites.includes(movie.id);
 
+  const poster = movie.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    : placeholder;
+
   return (
-    <Card>
-      <CardHeader
-        avatar={
-          isFavorite ? (
-            <Avatar
-              sx={{
-                backgroundColor: "red"
-              }}
-            >
-              <FavoriteIcon />
-            </Avatar>
-          ) : null
-        }
-        title={
-          <Typography
-            variant="h5"
-            component="p"
-          >
-            {movie.title}{" "}
-          </Typography>
-        }
-      />
-
+    <Card
+      variant="outlined"
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <CardMedia
-        sx={{ height: 500 }}
-        image={
-          movie.poster_path
-            ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
-            : img
-        }
+        component="img"
+        image={poster}
+        alt={`${movie.title} poster`}
+        sx={{
+          width: "100%",
+          aspectRatio: "2 / 3",
+          objectFit: "cover",
+          bgcolor: "action.hover",
+        }}
       />
 
-      <CardContent>
-        <Grid container>
-          <Grid size={{ xs: 6 }}>
-            <Typography variant="h6" component="p">
-              <CalendarIcon fontSize="small" />
-              {movie.release_date}
-            </Typography>
-          </Grid>
+      <CardContent
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: 1,
+          }}
+        >
+          <Typography
+            variant="subtitle1"
+            component="h3"
+            fontWeight="bold"
+            sx={{
+              minHeight: "3em",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {movie.title}
+          </Typography>
 
-          <Grid size={{ xs: 6 }}>
-            <Typography variant="h6" component="p">
-              <StarRateIcon fontSize="small" />
-              {"  "} {movie.vote_average}{" "}
-            </Typography>
-          </Grid>
-        </Grid>
+          {isFavorite && (
+            <FavoriteIcon
+              color="error"
+              fontSize="small"
+              titleAccess="In Favourites"
+            />
+          )}
+        </Box>
+
+        <Box
+          sx={{
+            mt: "auto",
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 1,
+          }}
+        >
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            <CalendarIcon fontSize="small" />
+            {movie.release_date || "Date unknown"}
+          </Typography>
+
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.5,
+            }}
+          >
+            <StarRateIcon fontSize="small" />
+            {movie.vote_count > 0
+              ? Number(movie.vote_average).toFixed(1)
+              : "Not rated"}
+          </Typography>
+        </Box>
       </CardContent>
 
-      <CardActions disableSpacing>
-        {props.action?.(movie)}
-
-        <Link to={`/movies/${movie.id}`}>
-        <Button
-          variant="outlined"
-          size="medium"
-          color="primary"
+      <CardActions
+        sx={{
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 1,
+          px: 2,
+          pb: 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
+          }}
         >
-          More Info ...
+          {action?.(movie)}
+        </Box>
+
+        <Button
+          component={Link}
+          to={`/movies/${movie.id}`}
+          variant="outlined"
+          size="small"
+        >
+          More Info
         </Button>
-        </Link>
       </CardActions>
     </Card>
   );
-}
+};
+
+export default MovieCard;

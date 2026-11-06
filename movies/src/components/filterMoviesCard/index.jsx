@@ -1,99 +1,88 @@
-import React, { useState, useEffect } from "react";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import img from '../../images/pexels-dziana-hasanbekava-5480827.jpg';
-import { getGenres } from "../../api/tmdb-api";
+
 import { useQuery } from "@tanstack/react-query";
-import Spinner from "../spinner";
+import { getGenres } from "../../api/tmdb-api";
 
-const formControl = {
-  margin: 1,
-  minWidth: "90%",
-  backgroundColor: "rgb(255, 255, 255)"
-};
+import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
 
-export default function FilterMoviesCard(props) {
-
+const FilterMoviesCard = (props) => {
   const {
-  data,
-  error,
-  isPending,
-  isError,
+    data,
+    error,
+    isPending,
+    isError,
   } = useQuery({
     queryKey: ["genres"],
     queryFn: getGenres,
   });
 
-  if (isPending) {
-    return <Spinner />;
-  }
-
-  if (isError) {
-    return <h1>{error.message}</h1>;
-  }
-
-  const genres = [
-    { id: "0", name: "All" },
-    ...data.genres,
-  ];
-
-  const handleChange = (e, type, value) => {
-    e.preventDefault();
-    props.onUserInput(type, value);
-  };
-
-  const handleTextChange = (e) => {
-    handleChange(e, "name", e.target.value);
-  };
-
-  const handleGenreChange = (e) => {
-    handleChange(e, "genre", e.target.value);
-  };
-
   return (
-    <Card
-      sx={{
-        backgroundColor: "rgb(204, 204, 0)"
-      }}
+    <Paper
       variant="outlined"
+      sx={{
+        p: 2,
+        mb: 2,
+      }}
     >
-      <CardContent>
-
-        <Typography variant="h5" component="h1">
-          <SearchIcon fontSize="large" />
-          Filter the movies.
-        </Typography>
-
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={2}
+        alignItems={{
+          xs: "stretch",
+          md: "center",
+        }}
+      >
         <TextField
-          sx={{ ...formControl }}
-          id="filled-search"
-          label="Search field"
+          label="Filter by title"
           type="search"
-          variant="filled"
           value={props.titleFilter}
-          onChange={handleTextChange}
+          onChange={(event) =>
+            props.onUserInput(
+              "name",
+              event.target.value
+            )
+          }
+          fullWidth
+          size="small"
+          sx={{ flex: 1 }}
         />
 
-        <FormControl sx={{ ...formControl }}>
+        <FormControl
+          size="small"
+          sx={{
+            width: {
+              xs: "100%",
+              md: 240,
+            },
+          }}
+        >
           <InputLabel id="genre-label">
             Genre
           </InputLabel>
 
           <Select
             labelId="genre-label"
-            id="genre-select"
+            label="Genre"
             value={props.genreFilter}
-            onChange={handleGenreChange}
+            onChange={(event) =>
+              props.onUserInput(
+                "genre",
+                event.target.value
+              )
+            }
+            disabled={isPending || isError}
           >
-            {genres.map((genre) => (
+            <MenuItem value="0">
+              All genres
+            </MenuItem>
+
+            {(data?.genres ?? []).map((genre) => (
               <MenuItem
                 key={genre.id}
                 value={genre.id}
@@ -102,24 +91,20 @@ export default function FilterMoviesCard(props) {
               </MenuItem>
             ))}
           </Select>
-
         </FormControl>
-      </CardContent>
+      </Stack>
 
-      <CardMedia
-        sx={{ height: 300 }}
-        image={img}
-        title="Filter"
-      />
-
-      <CardContent>
-        <Typography variant="h5" component="h1">
-          <SearchIcon fontSize="large" />
-          Filter the movies.
-          <br />
+      {isError && (
+        <Typography
+          color="error"
+          variant="body2"
+          sx={{ mt: 1 }}
+        >
+          Could not load genres: {error.message}
         </Typography>
-      </CardContent>
-
-    </Card>
+      )}
+    </Paper>
   );
-}
+};
+
+export default FilterMoviesCard;
