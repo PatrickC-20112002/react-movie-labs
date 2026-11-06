@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -22,9 +23,13 @@ import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
+
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const PersonDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
@@ -91,7 +96,6 @@ const PersonDetailsPage = () => {
 
   const uniqueMovies = Array.from(movieMap.values());
 
-
   const filteredMovies = uniqueMovies
     .filter((movie) =>
       movie.title
@@ -135,47 +139,81 @@ const PersonDetailsPage = () => {
   return (
     <Box
       sx={{
-        maxWidth: 1400,
+        maxWidth: 1536,
         mx: "auto",
-        p: { xs: 2, md: 4 },
+        px: { xs: 2, sm: 3 },
+        py: { xs: 2, md: 3 },
       }}
     >
-      <Button component={Link} to="/" sx={{ mb: 3 }}>
-        Browse Movies
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+        sx={{ mb: 2 }}
+      >
+        Back
       </Button>
 
-      <Grid container spacing={4}>
-        <Grid size={{ xs: 12, md: 4 }}>
+      <Grid
+        container
+        spacing={3}
+        alignItems="flex-start"
+      >
+        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
           {person.profile_path ? (
             <Box
               component="img"
               src={`https://image.tmdb.org/t/p/w500${person.profile_path}`}
               alt={person.name}
               sx={{
-                width: "100%",
-                maxWidth: 400,
-                borderRadius: 2,
                 display: "block",
+                width: "100%",
+                maxWidth: {
+                  xs: 320,
+                  md: "100%",
+                },
+                aspectRatio: "2 / 3",
+                objectFit: "cover",
+                borderRadius: 1,
+                mx: { xs: "auto", md: 0 },
               }}
             />
           ) : (
             <Paper
               sx={{
-                height: 450,
+                width: "100%",
+                maxWidth: {
+                  xs: 320,
+                  md: "100%",
+                },
+                aspectRatio: "2 / 3",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                mx: { xs: "auto", md: 0 },
+                borderRadius: 1,
               }}
             >
-              <Avatar sx={{ width: 120, height: 120 }}>
+              <Avatar
+                sx={{
+                  width: 120,
+                  height: 120,
+                }}
+              >
                 {person.name?.charAt(0)}
               </Avatar>
             </Paper>
           )}
         </Grid>
 
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Typography variant="h3" gutterBottom>
+        <Grid size={{ xs: 12, md: 8, lg: 9 }}>
+          <Typography
+            variant="h4"
+            component="h1"
+            sx={{
+              fontWeight: 600,
+              mb: 1,
+            }}
+          >
             {person.name}
           </Typography>
 
@@ -188,14 +226,18 @@ const PersonDetailsPage = () => {
             {person.known_for_department || "Unknown"}
           </Typography>
 
-          <Typography variant="body1" sx={{ mt: 2 }}>
+          <Typography
+            variant="body1"
+            sx={{ mt: 2 }}
+          >
             <strong>Born:</strong>{" "}
             {person.birthday || "Not available"}
           </Typography>
 
           {person.deathday && (
             <Typography variant="body1">
-              <strong>Died:</strong> {person.deathday}
+              <strong>Died:</strong>{" "}
+              {person.deathday}
             </Typography>
           )}
 
@@ -204,7 +246,14 @@ const PersonDetailsPage = () => {
             {person.place_of_birth || "Not available"}
           </Typography>
 
-          <Typography variant="h5" sx={{ mt: 4, mb: 1 }}>
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{
+              mt: 3,
+              mb: 1,
+            }}
+          >
             Biography
           </Typography>
 
@@ -212,7 +261,7 @@ const PersonDetailsPage = () => {
             variant="body1"
             sx={{
               whiteSpace: "pre-line",
-              lineHeight: 1.8,
+              lineHeight: 1.7,
             }}
           >
             {person.biography ||
@@ -221,8 +270,14 @@ const PersonDetailsPage = () => {
         </Grid>
       </Grid>
 
-      <Box sx={{ mt: 6 }}>
-        <Typography variant="h4" sx={{ mb: 3 }}>
+      <Box sx={{ mt: 5 }}>
+        <Divider sx={{ mb: 4 }} />
+
+        <Typography
+          variant="h5"
+          component="h2"
+          sx={{ mb: 3 }}
+        >
           Filmography
         </Typography>
 
@@ -293,15 +348,17 @@ const PersonDetailsPage = () => {
                     {movie.poster_path ? (
                       <CardMedia
                         component="img"
-                        height="250"
                         image={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
                         alt={movie.title}
-                        sx={{ objectFit: "cover" }}
+                        sx={{
+                          aspectRatio: "2 / 3",
+                          objectFit: "cover",
+                        }}
                       />
                     ) : (
                       <Box
                         sx={{
-                          height: 250,
+                          aspectRatio: "2 / 3",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -359,7 +416,12 @@ const PersonDetailsPage = () => {
         )}
 
         {visibleCount < filteredMovies.length && (
-          <Box sx={{ textAlign: "center", mt: 4 }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              mt: 4,
+            }}
+          >
             <Button
               variant="contained"
               onClick={() =>

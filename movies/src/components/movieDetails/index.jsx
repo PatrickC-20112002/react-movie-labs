@@ -8,7 +8,10 @@ import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Drawer from "@mui/material/Drawer";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -16,6 +19,7 @@ import MonetizationIcon from "@mui/icons-material/MonetizationOn";
 import StarRateIcon from "@mui/icons-material/StarRate";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import RateReviewIcon from "@mui/icons-material/RateReview";
+import CloseIcon from "@mui/icons-material/Close";
 
 import MovieHeader from "../headerMovie";
 import MovieReviews from "../movieReviews";
@@ -213,13 +217,64 @@ const MovieDetails = ({ movie }) => {
 
       <MovieRecommendations movieId={movie.id} />
 
-      <Drawer
-        anchor="top"
+      <Dialog
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
+        fullWidth
+        maxWidth="md"
+        scroll="paper"
+        aria-labelledby="movie-reviews-title"
+        slotProps={{
+          paper: {
+            sx: {
+              maxHeight: "80vh",
+            },
+          },
+        }}
       >
-        <MovieReviews movie={movie} />
-      </Drawer>
+        <DialogTitle
+          component="div"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 2,
+            py: 2,
+          }}
+        >
+          <Box sx={{ minWidth: 0 }}>
+            <Typography
+              id="movie-reviews-title"
+              component="h2"
+              variant="h6"
+            >
+              Reviews
+            </Typography>
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+            >
+              {movie.title}
+            </Typography>
+          </Box>
+
+          <IconButton
+            aria-label="Close reviews"
+            onClick={() => setDrawerOpen(false)}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent dividers sx={{ p: 0 }}>
+          <MovieReviews
+            movie={movie}
+            onClose={() => setDrawerOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
     </>
   );
 };

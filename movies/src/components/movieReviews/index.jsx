@@ -1,4 +1,5 @@
-import React from "react";
+import { Link } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,16 +7,14 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-
-import { Link } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 import { getMovieReviews } from "../../api/tmdb-api";
 import { excerpt } from "../../util";
 import Spinner from "../spinner";
 
-export default function MovieReviews({ movie }) {
+const MovieReviews = ({ movie, onClose }) => {
   const {
     data,
     error,
@@ -31,57 +30,126 @@ export default function MovieReviews({ movie }) {
   }
 
   if (isError) {
-    return <h1>{error.message}</h1>;
+    return (
+      <Typography color="error" sx={{ p: 2 }}>
+        {error.message}
+      </Typography>
+    );
   }
 
-  const reviews = data.results;
+  const reviews = data.results ?? [];
+
+  if (reviews.length === 0) {
+    return (
+      <Typography
+        color="text.secondary"
+        sx={{ p: 3 }}
+      >
+        No reviews available for this movie.
+      </Typography>
+    );
+  }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table
-        sx={{ minWidth: 550 }}
-        aria-label="reviews table"
+        size="small"
+        aria-label="movie reviews"
+        sx={{
+          width: "100%",
+          tableLayout: "fixed",
+        }}
       >
         <TableHead>
           <TableRow>
-            <TableCell>
+            <TableCell
+              sx={{
+                width: "25%",
+                fontWeight: "bold",
+              }}
+            >
               Author
             </TableCell>
 
-            <TableCell align="center">
+            <TableCell
+              sx={{
+                width: "55%",
+                fontWeight: "bold",
+              }}
+            >
               Excerpt
             </TableCell>
 
-            <TableCell align="right">
+            <TableCell
+              sx={{
+                width: "20%",
+                fontWeight: "bold",
+              }}
+            >
               More
             </TableCell>
           </TableRow>
         </TableHead>
 
         <TableBody>
-          {reviews.map((r) => (
-            <TableRow key={r.id}>
+          {reviews.map((review) => (
+            <TableRow
+              key={review.id}
+              hover
+            >
               <TableCell
-                component="th"
-                scope="row"
+                sx={{
+                  verticalAlign: "top",
+                  py: 2,
+                  overflowWrap: "anywhere",
+                }}
               >
-                {r.author}
+                {review.author || "Anonymous"}
               </TableCell>
 
-              <TableCell>
-                {excerpt(r.content)}
+              <TableCell
+                sx={{
+                  verticalAlign: "top",
+                  py: 2,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    overflowWrap: "anywhere",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {excerpt(review.content ?? "")}
+                </Typography>
               </TableCell>
 
-              <TableCell>
-                <Link
-                  to={`/reviews/${r.id}`}
+              <TableCell
+                sx={{
+                  verticalAlign: "top",
+                  py: 2,
+                  overflowWrap: "anywhere",
+                }}
+              >
+                <Box
+                  component={Link}
+                  to={`/reviews/${review.id}`}
                   state={{
-                    review: r,
-                    movie: movie,
+                    review,
+                    movie,
+                  }}
+                  onClick={onClose}
+                  sx={{
+                    color: "primary.main",
+                    fontSize: "0.875rem",
                   }}
                 >
                   Full Review
-                </Link>
+                </Box>
               </TableCell>
             </TableRow>
           ))}
@@ -89,4 +157,6 @@ export default function MovieReviews({ movie }) {
       </Table>
     </TableContainer>
   );
-}
+};
+
+export default MovieReviews;

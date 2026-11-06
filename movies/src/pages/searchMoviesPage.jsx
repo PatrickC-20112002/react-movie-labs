@@ -16,6 +16,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
@@ -25,6 +26,16 @@ const SearchMoviesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const query = (searchParams.get("q") ?? "").trim();
+  const requestedSort = searchParams.get("sort") ?? "relevance";
+
+  const sortBy = [
+    "relevance",
+    "newest",
+    "oldest",
+    "rating",
+  ].includes(requestedSort)
+    ? requestedSort
+    : "relevance";
 
   const requestedPage = Number(
     searchParams.get("page") ?? 1
@@ -67,6 +78,17 @@ const SearchMoviesPage = () => {
     setSearchParams({
       q: query,
       page: String(newPage),
+      ...(sortBy !== "relevance" ? { sort: sortBy } : {}),
+    });
+  };
+
+  const handleSortChange = (event) => {
+    const newSort = event.target.value;
+
+    setSearchParams({
+      q: query,
+      ...(page > 1 ? { page: String(page) } : {}),
+      ...(newSort !== "relevance" ? { sort: newSort } : {}),
     });
   };
 
@@ -74,6 +96,30 @@ const SearchMoviesPage = () => {
     1,
     Math.min(data?.total_pages ?? 1, 500)
   );
+
+
+const sortedMovies = [...(data?.results ?? [])];
+
+  if (sortBy !== "relevance") {
+    sortedMovies.sort((a, b) => {
+      if (sortBy === "rating") {
+        return (b.vote_average ?? 0) -
+          (a.vote_average ?? 0);
+      }
+
+      const fallback =
+        sortBy === "oldest"
+          ? "9999-12-31"
+          : "0000-00-00";
+
+      const dateA = a.release_date || fallback;
+      const dateB = b.release_date || fallback;
+
+      return sortBy === "oldest"
+        ? dateA.localeCompare(dateB)
+        : dateB.localeCompare(dateA);
+    });
+  }
 
   return (
     <Container
@@ -154,14 +200,41 @@ const SearchMoviesPage = () => {
               gap: 2,
             }}
           >
-            <Typography variant="h6">
-              Results for "{query}"
-            </Typography>
+            <Box>
+              <Typography variant="h6">
+                Results for "{query}"
+              </Typography>
 
-            <Typography color="text.secondary">
-              {data.total_results.toLocaleString()} results
-              {isFetching ? " · Refreshing" : ""}
-            </Typography>
+              <Typography color="text.secondary">
+                {data.total_results.toLocaleString()} results
+                {isFetching ? " · Refreshing" : ""}
+              </Typography>
+            </Box>
+
+            <TextField
+              select
+              size="small"
+              label="Sort this page"
+              value={sortBy}
+              onChange={handleSortChange}
+              sx={{ minWidth: 200 }}
+            >
+              <MenuItem value="relevance">
+                Best Match
+              </MenuItem>
+
+              <MenuItem value="newest">
+                Newest First
+              </MenuItem>
+
+              <MenuItem value="oldest">
+                Oldest First
+              </MenuItem>
+
+              <MenuItem value="rating">
+                Highest Rated
+              </MenuItem>
+            </TextField>
           </Box>
 
           {data.results.length === 0 ? (
@@ -177,7 +250,7 @@ const SearchMoviesPage = () => {
           ) : (
             <Grid container>
               <MovieList
-                movies={data.results}
+                movies={sortedMovies}
                 action={(movie) => (
                   <>
                     <AddToFavoritesIcon movie={movie} />
