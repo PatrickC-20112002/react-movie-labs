@@ -1,21 +1,39 @@
-import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
 import PageTemplate from "../components/templateMovieListPage";
 import { getUpcomingMovies } from "../api/tmdb-api";
 import AddToMustWatchIcon from "../components/cardIcons/addToMustWatch";
+import Spinner from "../components/spinner";
+
+import Typography from "@mui/material/Typography";
 
 const UpcomingMoviesPage = () => {
-  const [movies, setMovies] = useState([]);
+  const {
+    data,
+    error,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["upcoming"],
+    queryFn: getUpcomingMovies,
+  });
 
-  useEffect(() => {
-    getUpcomingMovies().then((movies) => {
-      setMovies(movies);
-    });
-  }, []);
+  if (isPending) {
+    return <Spinner />;
+  }
+
+  if (isError) {
+    return (
+      <Typography color="error" sx={{ p: 3 }}>
+        {error.message}
+      </Typography>
+    );
+  }
 
   return (
     <PageTemplate
       title="Upcoming Movies"
-      movies={movies}
+      movies={data.results ?? []}
       action={(movie) => (
         <AddToMustWatchIcon movie={movie} />
       )}

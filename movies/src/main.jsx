@@ -1,4 +1,3 @@
-import React from "react";
 import { createRoot } from "react-dom/client";
 
 import {
@@ -39,6 +38,7 @@ const queryClient = new QueryClient({
   },
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -113,7 +113,7 @@ const App = () => {
 
             <Route
               path="*"
-              element={<Navigate to="/" />}
+              element={<Navigate to="/" replace />}
             />
           </Routes>
         </MoviesContextProvider>

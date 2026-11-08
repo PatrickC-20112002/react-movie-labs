@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const MoviesContext = React.createContext(null);
 
 const MoviesContextProvider = ({ children }) => {
