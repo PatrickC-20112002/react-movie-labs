@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -24,20 +23,60 @@ import Button from "@mui/material/Button";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 
-const ExploreMoviesPage = () => {
-  const [page, setPage] = useState(1);
-  const [genre, setGenre] = useState("");
-  const [year, setYear] = useState("");
-  const [minRating, setMinRating] = useState("0");
-  const [sortBy, setSortBy] = useState("popularity.desc");
+const sortOptions = [
+  "popularity.desc",
+  "vote_average.desc",
+  "primary_release_date.desc",
+  "vote_count.desc",
+];
 
-  // Apply the year only after four valid digits have been entered.
+const ratingOptions = ["0", "5", "6", "7", "8", "9"];
+
+const ExploreMoviesPage = () => {
+  const [searchParams, setSearchParams] =
+    useSearchParams();
+
+  const requestedPage = Number(
+    searchParams.get("page") ?? 1
+  );
+
+  const page =
+    Number.isInteger(requestedPage) &&
+    requestedPage >= 1 &&
+    requestedPage <= 500
+      ? requestedPage
+      : 1;
+
+  const requestedGenre = searchParams.get("genre") ?? "";
+
+  const genre = /^\d+$/.test(requestedGenre)
+    ? requestedGenre
+    : "";
+
+  const year = searchParams.get("year") ?? "";
+
   const selectedYear =
     /^\d{4}$/.test(year) &&
     Number(year) >= 1888 &&
     Number(year) <= 2100
       ? year
       : "";
+
+  const requestedRating =
+    searchParams.get("rating") ?? "0";
+
+  const minRating = ratingOptions.includes(
+    requestedRating
+  )
+    ? requestedRating
+    : "0";
+
+  const requestedSort =
+    searchParams.get("sort") ?? "popularity.desc";
+
+  const sortBy = sortOptions.includes(requestedSort)
+    ? requestedSort
+    : "popularity.desc";
 
   const genresQuery = useQuery({
     queryKey: ["genres"],
@@ -64,22 +103,52 @@ const ExploreMoviesPage = () => {
     queryFn: getAdvancedMovies,
   });
 
-  const updateFilter = (setter, value) => {
-    setter(value);
-    setPage(1);
+  const updateFilter = (name, value) => {
+    const nextParams = new URLSearchParams(
+      searchParams
+    );
+
+    const defaults = {
+      genre: "",
+      year: "",
+      rating: "0",
+      sort: "popularity.desc",
+    };
+
+    if (value === defaults[name]) {
+      nextParams.delete(name);
+    } else {
+      nextParams.set(name, value);
+    }
+
+    // Changing filters always returns to page one.
+    nextParams.delete("page");
+
+    // Avoid creating a history entry for every keystroke.
+    setSearchParams(nextParams, { replace: true });
   };
 
   const resetFilters = () => {
-    setPage(1);
-    setGenre("");
-    setYear("");
-    setMinRating("0");
-    setSortBy("popularity.desc");
+    setSearchParams({}, { replace: true });
   };
 
-  const totalPages = Math.min(
-    data?.total_pages ?? 1,
-    500
+  const handlePageChange = (_, newPage) => {
+    const nextParams = new URLSearchParams(
+      searchParams
+    );
+
+    if (newPage === 1) {
+      nextParams.delete("page");
+    } else {
+      nextParams.set("page", String(newPage));
+    }
+
+    setSearchParams(nextParams);
+  };
+
+  const totalPages = Math.max(
+    1,
+    Math.min(data?.total_pages ?? 1, 500)
   );
 
   return (
@@ -105,7 +174,7 @@ const ExploreMoviesPage = () => {
               value={genre}
               onChange={(event) =>
                 updateFilter(
-                  setGenre,
+                  "genre",
                   event.target.value
                 )
               }
@@ -135,7 +204,7 @@ const ExploreMoviesPage = () => {
               value={year}
               onChange={(event) =>
                 updateFilter(
-                  setYear,
+                  "year",
                   event.target.value
                 )
               }
@@ -157,7 +226,7 @@ const ExploreMoviesPage = () => {
               value={minRating}
               onChange={(event) =>
                 updateFilter(
-                  setMinRating,
+                  "rating",
                   event.target.value
                 )
               }
@@ -165,18 +234,23 @@ const ExploreMoviesPage = () => {
               <MenuItem value="0">
                 Any rating
               </MenuItem>
+
               <MenuItem value="5">
                 5+ / 10
               </MenuItem>
+
               <MenuItem value="6">
                 6+ / 10
               </MenuItem>
+
               <MenuItem value="7">
                 7+ / 10
               </MenuItem>
+
               <MenuItem value="8">
                 8+ / 10
               </MenuItem>
+
               <MenuItem value="9">
                 9+ / 10
               </MenuItem>
@@ -191,7 +265,7 @@ const ExploreMoviesPage = () => {
               value={sortBy}
               onChange={(event) =>
                 updateFilter(
-                  setSortBy,
+                  "sort",
                   event.target.value
                 )
               }
@@ -225,7 +299,10 @@ const ExploreMoviesPage = () => {
       </Paper>
 
       {genresQuery.isError && (
-        <Typography color="error" sx={{ mb: 2 }}>
+        <Typography
+          color="error"
+          sx={{ mb: 2 }}
+        >
           Could not load genre options.
         </Typography>
       )}
@@ -283,9 +360,7 @@ const ExploreMoviesPage = () => {
               <Pagination
                 count={totalPages}
                 page={page}
-                onChange={(_, newPage) =>
-                  setPage(newPage)
-                }
+                onChange={handlePageChange}
                 color="primary"
                 size="large"
                 showFirstButton
