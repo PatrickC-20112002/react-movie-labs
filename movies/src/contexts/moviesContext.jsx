@@ -11,19 +11,54 @@ const MoviesContextProvider = ({ children }) => {
       );
 
       return Array.isArray(saved)
-        ? [...new Set(
-            saved.filter(
-              (id) => Number.isInteger(id) && id > 0
-            )
-          )]
+        ? [
+            ...new Set(
+              saved.filter(
+                (id) => Number.isInteger(id) && id > 0
+              )
+            ),
+          ]
         : [];
     } catch {
       return [];
     }
   });
 
-  const [favorites, setFavorites] = useState([]);
-  const [myReviews, setMyReviews] = useState({});
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem("favoriteMovieIds") ?? "[]"
+      );
+
+      return Array.isArray(saved)
+        ? [
+            ...new Set(
+              saved.filter(
+                (id) => Number.isInteger(id) && id > 0
+              )
+            ),
+          ]
+        : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [myReviews, setMyReviews] = useState(() => {
+    try {
+      const saved = JSON.parse(
+        localStorage.getItem("myMovieReviews") ?? "{}"
+      );
+
+      return saved &&
+        typeof saved === "object" &&
+        !Array.isArray(saved)
+        ? saved
+        : {};
+    } catch {
+      return {};
+    }
+  });
 
   const addToFavorites = (movie) => {
     setFavorites((previous) =>
@@ -40,11 +75,11 @@ const MoviesContextProvider = ({ children }) => {
   };
 
   const addReview = (movie, review) => {
-  setMyReviews((previous) => ({
-    ...previous,
-    [movie.id]: review,
-  }));
-};
+    setMyReviews((previous) => ({
+      ...previous,
+      [movie.id]: review,
+    }));
+  };
 
   const addToMustWatch = (movie) => {
     setMustWatch((previous) =>
@@ -66,11 +101,23 @@ const MoviesContextProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem(
+      "favoriteMovieIds",
+      JSON.stringify(favorites)
+    );
+  }, [favorites]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "myMovieReviews",
+      JSON.stringify(myReviews)
+    );
+  }, [myReviews]);
+
+  useEffect(() => {
+    localStorage.setItem(
       "mustWatchMovieIds",
       JSON.stringify(mustWatch)
     );
-
-    console.log("Must Watch movie IDs:", mustWatch);
   }, [mustWatch]);
 
   return (
@@ -84,7 +131,7 @@ const MoviesContextProvider = ({ children }) => {
         mustWatch,
         addToMustWatch,
         removeFromMustWatch,
-        clearMustWatch
+        clearMustWatch,
       }}
     >
       {children}

@@ -1,20 +1,23 @@
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router";
+import { useForm, Controller } from "react-hook-form";
+
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { useForm, Controller } from "react-hook-form";
-import { useState, useContext } from "react";
-import { MoviesContext } from "../../contexts/moviesContext";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-import { useNavigate } from "react-router";
+
+import { MoviesContext } from "../../contexts/moviesContext";
 
 const ratings = [
   { value: 5, label: "Excellent" },
   { value: 4, label: "Good" },
   { value: 3, label: "Average" },
   { value: 2, label: "Poor" },
+  { value: 1, label: "Very Poor" },
   { value: 0, label: "Terrible" },
 ];
 
@@ -22,6 +25,7 @@ const ReviewForm = ({ movie }) => {
   const { addReview } = useContext(MoviesContext);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
   const {
     control,
     handleSubmit,
@@ -37,39 +41,42 @@ const ReviewForm = ({ movie }) => {
 
   const onSubmit = (review) => {
     addReview(movie, {
-        ...review,
-        movieId: movie.id,
+      ...review,
+      movieId: movie.id,
     });
 
     setOpen(true);
   };
 
-    const handleSnackClose = () => {
-        setOpen(false);
-        navigate("/movies/favorites");
-    };
+  const handleSnackClose = () => {
+    setOpen(false);
+    navigate("/movies/favorites");
+  };
 
   return (
-  <Box sx={{ marginTop: 2 }}>
-    <Snackbar
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      open={open}
-      onClose={handleSnackClose}
-    >
-      <MuiAlert
-        severity="success"
-        variant="filled"
+    <Box sx={{ marginTop: 2 }}>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={open}
         onClose={handleSnackClose}
       >
-        <Typography variant="h6">
-          Thank you for submitting a review
-        </Typography>
-      </MuiAlert>
-    </Snackbar>
+        <MuiAlert
+          severity="success"
+          variant="filled"
+          onClose={handleSnackClose}
+        >
+          <Typography variant="h6">
+            Thank you for submitting a review
+          </Typography>
+        </MuiAlert>
+      </Snackbar>
 
-    <Typography variant="h3" component="h2">
-      Write a review
-    </Typography>
+      <Typography variant="h3" component="h2">
+        Write a review
+      </Typography>
 
       <Box
         component="form"
@@ -86,7 +93,9 @@ const ReviewForm = ({ movie }) => {
         <Controller
           name="author"
           control={control}
-          rules={{ required: "Name is required" }}
+          rules={{
+            required: "Name is required",
+          }}
           render={({ field }) => (
             <TextField
               {...field}
@@ -94,7 +103,10 @@ const ReviewForm = ({ movie }) => {
               required
               error={Boolean(errors.author)}
               helperText={errors.author?.message}
-              sx={{ width: "40ch", maxWidth: "100%" }}
+              sx={{
+                width: "40ch",
+                maxWidth: "100%",
+              }}
             />
           )}
         />
@@ -135,7 +147,10 @@ const ReviewForm = ({ movie }) => {
               sx={{ minWidth: 200 }}
             >
               {ratings.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
+                <MenuItem
+                  key={option.value}
+                  value={option.value}
+                >
                   {option.label}
                 </MenuItem>
               ))}
@@ -143,8 +158,16 @@ const ReviewForm = ({ movie }) => {
           )}
         />
 
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button type="submit" variant="contained">
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+          }}
+        >
+          <Button
+            type="submit"
+            variant="contained"
+          >
             Submit
           </Button>
 

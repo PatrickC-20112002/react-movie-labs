@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router";
 
 import Box from "@mui/material/Box";
@@ -27,6 +26,7 @@ import MovieCast from "../movieCast";
 import MovieCrew from "../movieCrew";
 import MovieRecommendations from "../movieRecommendations";
 
+import { MoviesContext } from "../../contexts/moviesContext";
 import placeholder from "../../images/film-poster-placeholder.png";
 
 const chipRow = {
@@ -42,17 +42,22 @@ const MovieDetails = ({ movie }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
 
+  const { myReviews } = useContext(MoviesContext);
+  const userReview = myReviews[movie.id];
+
   const poster = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : placeholder;
 
-  const rating = movie.vote_count > 0
-    ? `${Number(movie.vote_average).toFixed(1)} (${movie.vote_count})`
-    : "Not rated";
+  const rating =
+    movie.vote_count > 0
+      ? `${Number(movie.vote_average).toFixed(1)} (${movie.vote_count})`
+      : "Not rated";
 
-  const revenue = movie.revenue > 0
-    ? `$${movie.revenue.toLocaleString("en-US")}`
-    : "Revenue unknown";
+  const revenue =
+    movie.revenue > 0
+      ? `$${movie.revenue.toLocaleString("en-US")}`
+      : "Revenue unknown";
 
   return (
     <>
@@ -202,6 +207,45 @@ const MovieDetails = ({ movie }) => {
               View Reviews
             </Button>
           </Box>
+
+          {userReview && (
+            <Paper
+              variant="outlined"
+              sx={{
+                mt: 3,
+                p: 2,
+              }}
+            >
+              <Typography
+                variant="h6"
+                component="h2"
+                sx={{ mb: 1 }}
+              >
+                Your Review
+              </Typography>
+
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: 2 }}
+              >
+                {userReview.author || "You"}
+                {" · "}
+                Rating: {userReview.rating}/5
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  lineHeight: 1.7,
+                  whiteSpace: "pre-line",
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {userReview.review}
+              </Typography>
+            </Paper>
+          )}
         </Grid>
       </Grid>
 
@@ -274,7 +318,6 @@ const MovieDetails = ({ movie }) => {
           />
         </DialogContent>
       </Dialog>
-
     </>
   );
 };
